@@ -13,7 +13,8 @@ class Game extends StatefulWidget {
   // always marked "final".
 
   final String title;
-
+  final int NUMBER_OF_ELEMENTS_PER_LINE = 3;
+  final int NUMBER_OF_BOXES = 3 * 3;
   @override
   State<Game> createState() => _GameState();
 }
@@ -65,6 +66,19 @@ class _GameState extends State<Game> {
           // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            SizedBox(
+              height: boxSize * widget.NUMBER_OF_ELEMENTS_PER_LINE,
+              child: GridView.count(
+                  crossAxisCount: widget.NUMBER_OF_ELEMENTS_PER_LINE,
+                  children: List.generate(widget.NUMBER_OF_BOXES, (x) {
+                    return Container(
+                      width: boxSize,
+                      height: boxSize,
+                      decoration: BoxDecoration(border: Border.all(color: Colors.blueAccent))
+                    );
+                  }),
+                ),
+            ),
             const Text(
               'You have pushed the button this many times:',
             ),
