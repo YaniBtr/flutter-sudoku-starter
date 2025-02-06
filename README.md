@@ -8,3 +8,7 @@ Sudoku game
 2. Clone repository
 3. Retrieve dependencies: `flutter pub get`
 4. Run the app
+
+
+Nom : BETROUNE  
+Prenom : Yani
