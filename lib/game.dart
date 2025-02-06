@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'Grid.dart';
+
 class Game extends StatefulWidget {
   const Game({Key? key, required this.title}) : super(key: key);
 
@@ -13,8 +15,7 @@ class Game extends StatefulWidget {
   // always marked "final".
 
   final String title;
-  final int NUMBER_OF_ELEMENTS_PER_LINE = 3;
-  final int NUMBER_OF_BOXES = 3 * 3;
+
   @override
   State<Game> createState() => _GameState();
 }
@@ -35,10 +36,9 @@ class _GameState extends State<Game> {
 
   @override
   Widget build(BuildContext context) {
+
     var height = MediaQuery.of(context).size.height / 2;
     var width = MediaQuery.of(context).size.width;
-    var maxSize = height > width ? width : height;
-    var boxSize = (maxSize / 3).ceil().toDouble();
 
     return Scaffold(
       appBar: AppBar(
@@ -66,19 +66,7 @@ class _GameState extends State<Game> {
           // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            SizedBox(
-              height: boxSize * widget.NUMBER_OF_ELEMENTS_PER_LINE,
-              child: GridView.count(
-                  crossAxisCount: widget.NUMBER_OF_ELEMENTS_PER_LINE,
-                  children: List.generate(widget.NUMBER_OF_BOXES, (x) {
-                    return Container(
-                      width: boxSize,
-                      height: boxSize,
-                      decoration: BoxDecoration(border: Border.all(color: Colors.blueAccent))
-                    );
-                  }),
-                ),
-            ),
+            Grid(color: Colors.blue, height: height, width: width, childGrid: Grid(height: height, width: 0.3)),
             const Text(
               'You have pushed the button this many times:',
             ),
