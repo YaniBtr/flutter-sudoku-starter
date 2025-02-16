@@ -8,8 +8,9 @@ class GameGrid extends StatefulWidget {
   final dynamic height;
   final List<String> cellValues;
   final List<Position> cellPositions;
+  final List<String> solution;
 
-  const GameGrid({super.key, required this.width, required this.height, required this.cellValues, required this.cellPositions});
+  const GameGrid({super.key, required this.width, required this.height, required this.cellValues, required this.cellPositions, required this.solution});
 
   @override
   State<GameGrid> createState() => GameGridState();
@@ -28,7 +29,6 @@ class GameGridState extends State<GameGrid> {
     var numberOfBoxes = 3 * 3;
 
       int i = 0;
-      int j = 0;
 
       return  SizedBox(
         height: boxSize * numberOfElementsPerLine,
@@ -47,9 +47,14 @@ class GameGridState extends State<GameGrid> {
                     return GameCell(
                         width: widget.width,
                         height: widget.height,
-                        value: widget.cellValues[i++].toString(),
+                        value: Text(
+                            widget.cellValues[i++] == "" ? widget.solution[i-1] : widget.cellValues[i-1],
+                            style: TextStyle(
+                              color:  widget.cellValues[i-1] == "" ? Colors.black : Colors.black12,
+                            ),
+                        ),
                         onCellSelected: _selectCell,
-                        position: widget.cellPositions[j++]
+                        position: widget.cellPositions[i-1]
                     );
                   }),
                 ),

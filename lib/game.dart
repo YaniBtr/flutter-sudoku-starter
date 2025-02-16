@@ -17,6 +17,7 @@ class _GameState extends State<Game> {
   Puzzle puzzle = Puzzle(PuzzleOptions());
   List<String> _puzzleValues = [];
   List<Position> _puzzlePositions = [];
+  List<String> _solution = [];
   final GlobalKey<GameGridState> _gameGridState = GlobalKey();
 
   void _generatePuzzle() {
@@ -43,7 +44,8 @@ class _GameState extends State<Game> {
         height: MediaQuery.of(context).size.height / 2,
         width: MediaQuery.of(context).size.width,
         cellValues: _puzzleValues,
-        cellPositions : _puzzlePositions
+        cellPositions : _puzzlePositions,
+        solution: _solution,
       );
     });
   }
@@ -51,6 +53,7 @@ class _GameState extends State<Game> {
   void _extractPuzzleValuesAndPositions() {
     _puzzleValues = [];
     _puzzlePositions = [];
+    _solution = [];
 
     for(var a = 0; a < 3; a++) {
       for (var b = 0; b < 3; b++) {
@@ -63,10 +66,14 @@ class _GameState extends State<Game> {
             Position? position = puzzle.board()?.matrix()?[x + (a * 3)][y + (b * 3)]
                 .getPosition();
 
+            int? solutionValue = puzzle.solvedBoard()?.matrix()?[x + (a * 3)][y + (b * 3)]
+                .getValue();
+
             if(value != null && position != null){
               String valueString =value > 0 ? value.toString() : "";
               _puzzleValues.add(valueString);
               _puzzlePositions.add(position);
+              _solution.add(solutionValue.toString());
             }
           }
         }

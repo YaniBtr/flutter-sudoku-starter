@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sudoku_api/sudoku_api.dart';
 
 class GameCell extends StatefulWidget{
-  final String value;
+  final Text value;
   final dynamic width;
   final dynamic height;
   final Function(GameCellState) onCellSelected;
@@ -42,7 +42,7 @@ class GameCellState extends State<GameCell> {
           child: InkWell(
             onTap: () => widget.onCellSelected(this),
             child: Center(
-              child: Text(widget.value)
+              child: widget.value
             ),
           )
         )
