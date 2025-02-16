@@ -1,18 +1,9 @@
 import 'package:flutter/material.dart';
-
-import 'Grid.dart';
+import 'package:sudoku_api/sudoku_api.dart';
+import 'GameGrid.dart';
 
 class Game extends StatefulWidget {
   const Game({Key? key, required this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
 
   final String title;
 
@@ -21,67 +12,67 @@ class Game extends StatefulWidget {
 }
 
 class _GameState extends State<Game> {
-  int _counter = 0;
+  Widget gameGrid = const CircularProgressIndicator();
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
+  List<String> puzzleValues = [];
+
+  void _generatePuzzle() {
+    Puzzle puzzle = Puzzle(PuzzleOptions());
+
+    puzzle.generate().then((_) {
+      setState(() {
+        gameGrid = GameGrid(
+          height: MediaQuery.of(context).size.height / 2,
+          width: MediaQuery.of(context).size.width,
+          values: _extractPuzzleValues(puzzle),
+        );
+      });
     });
+  }
+
+  List<String> _extractPuzzleValues(Puzzle puzzle) {
+
+    List<String> puzzleValues = [];
+
+    for(var a = 0; a < 3; a++) {
+      for (var b = 0; b < 3; b++) {
+        for (var x = 0; x < 3; x++) {
+          for (var y = 0; y < 3; y++) {
+
+            int? value = puzzle.board()?.matrix()?[x + (a * 3)][y + (b * 3)]
+                .getValue();
+
+            if(value != null){
+              puzzleValues.add(value > 0 ? value.toString() : "");
+            }
+          }
+        }
+      }
+    }
+
+    return puzzleValues;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _generatePuzzle();
   }
 
   @override
   Widget build(BuildContext context) {
-
-    var height = MediaQuery.of(context).size.height / 2;
-    var width = MediaQuery.of(context).size.width;
-
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
       body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
         child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Grid(color: Colors.blue, height: height, width: width, childGrid: Grid(height: height, width: 0.3)),
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineLarge,
-            ),
+            gameGrid
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
