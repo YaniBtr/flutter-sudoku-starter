@@ -50,7 +50,7 @@ class GameGridState extends State<GameGrid> {
                         value: Text(
                             widget.cellValues[i++] == "" ? widget.solution[i-1] : widget.cellValues[i-1],
                             style: TextStyle(
-                              color:  widget.cellValues[i-1] == "" ? Colors.black : Colors.black12,
+                              color:  widget.cellValues[i-1] == "" ? Colors.black12 : Colors.black,
                             ),
                         ),
                         onCellSelected: _selectCell,

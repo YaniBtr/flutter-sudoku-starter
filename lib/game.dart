@@ -1,3 +1,4 @@
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/material.dart';
 import 'package:sudoku_api/sudoku_api.dart';
 import 'package:sudoku_starter/Components/GameCell.dart';
@@ -30,11 +31,37 @@ class _GameState extends State<Game> {
     GameCellState? selectedCellState = _gameGridState.currentState?.selectedCellState;
 
     if(selectedCellState != null) {
-      puzzle.board()!.cellAt(selectedCellState.widget.position).setValue(value);
-      _regenerateGameGrid();
+      Cell puzzleCell = puzzle.board()!.cellAt(selectedCellState.widget.position);
+
+      if (puzzleCell.prefill() == false) {
+        bool userInsertedValueIsCorrect = puzzle.solvedBoard()?.cellAt(selectedCellState.widget.position).getValue() == value;
+
+        if(value > 0) {
+          _createPopUpMessage(userInsertedValueIsCorrect);
+        }
+
+        puzzleCell.setValue(value);
+        _regenerateGameGrid();
+      }
     }
   }
 
+  void _createPopUpMessage(bool valueIsCorrect) {
+    final snackBar = SnackBar(
+      /// need to set following properties for best effect of awesome_snackbar_content
+      elevation: 0,
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: Colors.transparent,
+      content: AwesomeSnackbarContent(
+        title: 'Guess what...',
+        message:
+        valueIsCorrect ? 'The value is correct!' : 'The value is Wrong!',
+        contentType: valueIsCorrect ? ContentType.success : ContentType.failure,
+      ),
+    );
+
+    ScaffoldMessenger.of(context)..hideCurrentSnackBar()..showSnackBar(snackBar);
+  }
   void _regenerateGameGrid() {
     _extractPuzzleValuesAndPositions();
 
