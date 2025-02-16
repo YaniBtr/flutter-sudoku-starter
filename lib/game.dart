@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:sudoku_api/sudoku_api.dart';
-import 'GameGrid.dart';
+import 'Components/GameGrid.dart';
 
 class Game extends StatefulWidget {
-  const Game({Key? key, required this.title}) : super(key: key);
 
+  const Game({Key? key, required this.title}) : super(key: key);
   final String title;
 
   @override
@@ -24,7 +24,7 @@ class _GameState extends State<Game> {
         gameGrid = GameGrid(
           height: MediaQuery.of(context).size.height / 2,
           width: MediaQuery.of(context).size.width,
-          values: _extractPuzzleValues(puzzle),
+          cellValues: _extractPuzzleValues(puzzle),
         );
       });
     });
