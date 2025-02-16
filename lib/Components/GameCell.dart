@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:sudoku_api/sudoku_api.dart';
 
-class Cell extends StatefulWidget{
+class GameCell extends StatefulWidget{
   final String value;
   final dynamic width;
   final dynamic height;
-  final Function(CellState) onCellSelected;
+  final Function(GameCellState) onCellSelected;
+  final Position position;
 
-  const Cell({super.key, required this.width, required this.height, required this.value, required this.onCellSelected});
+
+  const GameCell({super.key, required this.position, required this.width, required this.height, required this.value, required this.onCellSelected});
 
   @override
-  State<Cell> createState() => CellState();
+  State<GameCell> createState() => GameCellState();
 }
 
-class CellState extends State<Cell> {
+class GameCellState extends State<GameCell> {
   bool _isSelected = false;
 
   void updateSelection(bool isSelected) {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sudoku_api/sudoku_api.dart';
+import 'package:sudoku_starter/Components/GameCell.dart';
 import 'Components/GameGrid.dart';
 
 class Game extends StatefulWidget {
@@ -13,26 +14,43 @@ class Game extends StatefulWidget {
 
 class _GameState extends State<Game> {
   Widget gameGrid = const CircularProgressIndicator();
-
-  List<String> puzzleValues = [];
+  Puzzle puzzle = Puzzle(PuzzleOptions());
+  List<String> _puzzleValues = [];
+  List<Position> _puzzlePositions = [];
+  final GlobalKey<GameGridState> _gameGridState = GlobalKey();
 
   void _generatePuzzle() {
-    Puzzle puzzle = Puzzle(PuzzleOptions());
-
     puzzle.generate().then((_) {
-      setState(() {
-        gameGrid = GameGrid(
-          height: MediaQuery.of(context).size.height / 2,
-          width: MediaQuery.of(context).size.width,
-          cellValues: _extractPuzzleValues(puzzle),
-        );
-      });
+      _regenerateGameGrid();
     });
   }
 
-  List<String> _extractPuzzleValues(Puzzle puzzle) {
+  void _updatePuzzleValue(int value) {
+    GameCellState? selectedCellState = _gameGridState.currentState?.selectedCellState;
 
-    List<String> puzzleValues = [];
+    if(selectedCellState != null) {
+      puzzle.board()!.cellAt(selectedCellState.widget.position).setValue(value);
+      _regenerateGameGrid();
+    }
+  }
+
+  void _regenerateGameGrid() {
+    _extractPuzzleValuesAndPositions();
+
+    setState(() {
+      gameGrid = GameGrid(
+        key: _gameGridState,
+        height: MediaQuery.of(context).size.height / 2,
+        width: MediaQuery.of(context).size.width,
+        cellValues: _puzzleValues,
+        cellPositions : _puzzlePositions
+      );
+    });
+  }
+
+  void _extractPuzzleValuesAndPositions() {
+    _puzzleValues = [];
+    _puzzlePositions = [];
 
     for(var a = 0; a < 3; a++) {
       for (var b = 0; b < 3; b++) {
@@ -42,15 +60,18 @@ class _GameState extends State<Game> {
             int? value = puzzle.board()?.matrix()?[x + (a * 3)][y + (b * 3)]
                 .getValue();
 
-            if(value != null){
-              puzzleValues.add(value > 0 ? value.toString() : "");
+            Position? position = puzzle.board()?.matrix()?[x + (a * 3)][y + (b * 3)]
+                .getPosition();
+
+            if(value != null && position != null){
+              String valueString =value > 0 ? value.toString() : "";
+              _puzzleValues.add(valueString);
+              _puzzlePositions.add(position);
             }
           }
         }
       }
     }
-
-    return puzzleValues;
   }
 
   @override
@@ -69,7 +90,25 @@ class _GameState extends State<Game> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            gameGrid
+            gameGrid,
+            Row(
+              children: [
+                ElevatedButton(onPressed: () => _updatePuzzleValue(0), child: const Text("Empty")),
+                ElevatedButton(onPressed: () => _updatePuzzleValue(1), child: const Text("1")),
+                ElevatedButton(onPressed: () => _updatePuzzleValue(2), child: const Text("2")),
+                ElevatedButton(onPressed: () => _updatePuzzleValue(3), child: const Text("3")),
+                ElevatedButton(onPressed: () => _updatePuzzleValue(4), child: const Text("4")),
+              ],
+            ),
+            Row(
+              children: [
+                ElevatedButton(onPressed: () => _updatePuzzleValue(5), child: const Text("5")),
+                ElevatedButton(onPressed: () => _updatePuzzleValue(6), child: const Text("6")),
+                ElevatedButton(onPressed: () => _updatePuzzleValue(7), child: const Text("7")),
+                ElevatedButton(onPressed: () => _updatePuzzleValue(8), child: const Text("8")),
+                ElevatedButton(onPressed: () => _updatePuzzleValue(9), child: const Text("9")),
+              ],
+            )
           ],
         ),
       ),

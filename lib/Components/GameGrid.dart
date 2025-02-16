@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:sudoku_starter/Components/Cell.dart';
+import 'package:sudoku_api/sudoku_api.dart';
+import 'package:sudoku_starter/Components/GameCell.dart';
 
 class GameGrid extends StatefulWidget {
 
   final dynamic width;
   final dynamic height;
   final List<String> cellValues;
+  final List<Position> cellPositions;
 
-  const GameGrid({super.key, required this.width, required this.height, required this.cellValues});
+  const GameGrid({super.key, required this.width, required this.height, required this.cellValues, required this.cellPositions});
 
   @override
-  State<GameGrid> createState() => _GameGridState();
+  State<GameGrid> createState() => GameGridState();
+
 }
 
-class _GameGridState extends State<GameGrid> {
-
-  CellState? _selectedCellState;
+class GameGridState extends State<GameGrid> {
+  GameCellState? _selectedCellState;
 
   @override
   Widget build(BuildContext context) {
@@ -25,8 +27,8 @@ class _GameGridState extends State<GameGrid> {
     var numberOfElementsPerLine = 3;
     var numberOfBoxes = 3 * 3;
 
-
       int i = 0;
+      int j = 0;
 
       return  SizedBox(
         height: boxSize * numberOfElementsPerLine,
@@ -42,7 +44,13 @@ class _GameGridState extends State<GameGrid> {
                 child: GridView.count(
                   crossAxisCount: numberOfElementsPerLine,
                   children: List.generate(numberOfBoxes, (x) {
-                    return Cell(width: widget.width, height: widget.height, value: widget.cellValues[i++].toString(), onCellSelected: _selectCell);
+                    return GameCell(
+                        width: widget.width,
+                        height: widget.height,
+                        value: widget.cellValues[i++].toString(),
+                        onCellSelected: _selectCell,
+                        position: widget.cellPositions[j++]
+                    );
                   }),
                 ),
               ),
@@ -53,7 +61,7 @@ class _GameGridState extends State<GameGrid> {
 
   }
 
-  void _selectCell(CellState state) {
+  void _selectCell(GameCellState state) {
     _selectedCellState?.updateSelection(!(_selectedCellState!.isSelected));
 
     if(state != _selectedCellState) {
@@ -63,4 +71,6 @@ class _GameGridState extends State<GameGrid> {
       _selectedCellState = null;
     }
   }
+
+  GameCellState? get selectedCellState => _selectedCellState;
 }
